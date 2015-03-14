@@ -12,6 +12,7 @@
             android:text="版本：1.0 "
             android:layout_centerInParent="true"
             android:textSize="22sp"
+            android:textColor="#000"
             />
 </RelativeLayout>
 
