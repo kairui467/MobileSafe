@@ -4,15 +4,28 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:background="@drawable/luncher_bg"
+              android:id="@+id/rl_root_splash"
         >
 
     <TextView
+            android:id="@+id/tv_splash_version"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="版本：1.0 "
             android:layout_centerInParent="true"
             android:textSize="22sp"
             android:textColor="#000"
+            android:shadowColor="#F00"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="2"
+            />
+
+    <ProgressBar
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/tv_splash_version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             />
 </RelativeLayout>
 
