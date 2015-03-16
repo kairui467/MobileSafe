@@ -27,5 +27,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             />
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="进度：0%"
+            android:id="@+id/tv_update_info"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:textSize="22dp"
+            android:textColor="#ff000000"
+            />
 </RelativeLayout>
 
