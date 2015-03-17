@@ -22,6 +22,9 @@ public class SettingItemView extends RelativeLayout
     private TextView tv_title;
     private TextView tv_desc;
 
+    private String desc_on;
+    private String desc_off;
+
     /**
      * 初始化布局文件
      * @param context
@@ -45,6 +48,13 @@ public class SettingItemView extends RelativeLayout
     {
         super(context, attrs);
         iniView(context);
+
+        String title = attrs.getAttributeValue("http://schemas.android.com/apk/res/com.kerray.MobileSafe", "title");
+        desc_on = attrs.getAttributeValue("http://schemas.android.com/apk/res/com.kerray.MobileSafe", "desc_on");
+        desc_off = attrs.getAttributeValue("http://schemas.android.com/apk/res/com.kerray.MobileSafe", "desc_off");
+
+        tv_title.setText(title);
+        setDesx(desc_off);
     }
 
     public SettingItemView(Context context, AttributeSet attrs, int defStyle)
@@ -66,6 +76,10 @@ public class SettingItemView extends RelativeLayout
      */
     public void setChecked(boolean checked)
     {
+        if (checked)
+            setDesx(desc_on);
+        else
+            setDesx(desc_off);
         cb_status.setChecked(checked);
     }
 
