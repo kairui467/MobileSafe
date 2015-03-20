@@ -1,4 +1,4 @@
-package com.kerray.MobileSafe;
+package com.kerray.MobileSafe.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.kerray.MobileSafe.R;
 import com.kerray.MobileSafe.utils.StreamTools;
 import net.tsz.afinal.FinalHttp;
 import net.tsz.afinal.http.AjaxCallBack;

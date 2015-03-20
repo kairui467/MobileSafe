@@ -1,9 +1,10 @@
-package com.kerray.MobileSafe;
+package com.kerray.MobileSafe.activity;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import com.kerray.MobileSafe.R;
 import com.kerray.MobileSafe.ui.SettingItemView;
 
 /**

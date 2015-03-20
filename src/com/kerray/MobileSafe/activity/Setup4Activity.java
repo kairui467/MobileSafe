@@ -1,10 +1,9 @@
-package com.kerray.MobileSafe;
+package com.kerray.MobileSafe.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.View;
+import com.kerray.MobileSafe.R;
 
 /**
  * @Created by kerray on 2015/3/18.
@@ -14,7 +13,7 @@ import android.view.View;
  * @创建人:kerray
  * @创建时间:2015/3/18
  */
-public class Setup4Activity extends Activity
+public class Setup4Activity extends BaseSetupActivity
 {
     private SharedPreferences sp;
 
@@ -28,7 +27,8 @@ public class Setup4Activity extends Activity
 
     }
 
-    public void next(View view)
+    @Override
+    public void showNext()
     {
         SharedPreferences.Editor editor = sp.edit();
         editor.putBoolean("configed", true);
@@ -38,16 +38,14 @@ public class Setup4Activity extends Activity
         startActivity(intent);
         finish();
         overridePendingTransition(R.anim.tran_in, R.anim.tran_out);
-
-
     }
 
-    public void pre(View view)
+    @Override
+    public void showPre()
     {
         Intent intent = new Intent(this, Setup3Activity.class);
         startActivity(intent);
         finish();
         overridePendingTransition(R.anim.tran_pre_in, R.anim.tran_pre_out);
-
     }
 }

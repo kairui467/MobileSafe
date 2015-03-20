@@ -1,4 +1,4 @@
-package com.kerray.MobileSafe;
+package com.kerray.MobileSafe.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+import com.kerray.MobileSafe.R;
 import com.kerray.MobileSafe.utils.MD5Utils;
 
 /**
