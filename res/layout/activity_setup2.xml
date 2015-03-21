@@ -28,6 +28,7 @@
             />
 
     <com.kerray.MobileSafe.ui.SettingItemView
+            android:id="@+id/siv_setup2_sim"
             k:title="点击绑定sim卡"
             k:desc_on="sim卡已绑定"
             k:desc_off="sim卡没有绑定"

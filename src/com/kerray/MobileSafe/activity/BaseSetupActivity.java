@@ -1,6 +1,7 @@
 package com.kerray.MobileSafe.activity;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -20,10 +21,13 @@ public abstract class BaseSetupActivity extends Activity
     //1.定义一个手势识别器
     private GestureDetector detector;
 
+    protected SharedPreferences sp;
+
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        sp = getSharedPreferences("config",MODE_PRIVATE);
         //2.实例化这个手势识别器
         detector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener()
         {
