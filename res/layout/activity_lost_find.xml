@@ -35,7 +35,9 @@
             android:layout_marginTop="8dip"
             android:text="xxxx"
             android:textColor="#000000"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:id="@+id/tv_safenumber"
+                />
     </RelativeLayout>
 
     <View
@@ -65,7 +67,9 @@
             android:layout_marginTop="8dip"
             android:src="@drawable/unlock"
             android:textColor="#000000"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:id="@+id/iv_protecting"
+                />
     </RelativeLayout>
 
     <View

@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -48,6 +49,7 @@ public class BootCompleteReceiver extends BroadcastReceiver
                 // sim 已经变更 发一个短信给安全号码
                 Log.i("kerray", "sim 卡已经变更");
                 Toast.makeText(context, "sim 卡已经变更", Toast.LENGTH_SHORT).show();
+                SmsManager.getDefault().sendTextMessage(sp.getString("safenumber", ""), null, "sim changing....", null, null);
             }
         }
     }

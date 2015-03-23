@@ -71,9 +71,11 @@ public class HomeActivity extends Activity
                 case 0://进入手机防盗页面
                     showLostFindDialog();
                     break;
+                case 7://进入高级工具
+                    startActivity(new Intent(HomeActivity.this, NumberAddressQueryActivity.class));
+                    break;
                 case 8://进入设置中心
-                    Intent i = new Intent(HomeActivity.this, SettingActivity.class);
-                    startActivity(i);
+                    startActivity(new Intent(HomeActivity.this, SettingActivity.class));
                     break;
                 default:
                     break;
@@ -82,18 +84,16 @@ public class HomeActivity extends Activity
         });
     }
 
+
     private void showLostFindDialog()
     {
         //判断是否设置过密码
         if (isSetupPwd())
-        {
             //已经设置密码了，弹出的是输入对话框
             showEnterDialog();
-        } else
-        {
+        else
             //没有设置密码，弹出的是设置密码对话框
             showSetupPwdDialog();
-        }
     }
 
     /**
@@ -126,7 +126,7 @@ public class HomeActivity extends Activity
                 String password_confirm = et_setup_confirm.getText().toString().trim();
                 if (TextUtils.isEmpty(password) || TextUtils.isEmpty(password_confirm))
                 {
-                    Toast.makeText(HomeActivity.this, "密码为空", 0).show();
+                    Toast.makeText(HomeActivity.this, "密码为空", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 //判断是否一致才去保存

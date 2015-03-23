@@ -18,7 +18,10 @@
     <CheckBox
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="您没有开启防盗保护" />
+        android:text="您没有开启防盗保护"
+        android:checked="false"
+        android:id="@+id/cb_proteting"
+            />
 
     <LinearLayout
         android:layout_width="wrap_content"
