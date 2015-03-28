@@ -3,41 +3,46 @@ package com.kerray.MobileSafe.db.dao;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-public class NumberAddressQueryUtils {
+public class NumberAddressQueryUtils
+{
 
-    private static String path = "data/data/com.itheima.mobilesafe/files/address.db";
+    private static String path = "data/data/com.kerray.MobileSafe/files/address.db";
 
     /**
      * 传一个号码进来，返回一归属地回去
-     *
      * @param number
      * @return
      */
-    public static String queryNumber(String number) {
+    public static String queryNumber(String number)
+    {
         String address = number;
         // path 把address.db这个数据库拷贝到data/data/《包名》/files/address.db
         SQLiteDatabase database = SQLiteDatabase.openDatabase(path, null,
           SQLiteDatabase.OPEN_READONLY);
         // 手机号码 13 14 15 16 18
         // 手机号码的正则表达式
-        if (number.matches("^1[34568]\\d{9}$")) {
-            // 手机号码
+        if (number.matches("^1[34568]\\d{9}$"))
+        {
+            // 手机号码7
 
             Cursor cursor = database
               .rawQuery(
                 "select location from data2 where id = (select outkey from data1 where id = ?)",
                 new String[] { number.substring(0, 7) });
 
-            while (cursor.moveToNext()) {
+            while (cursor.moveToNext())
+            {
 
                 String location = cursor.getString(0);
                 address = location;
             }
             cursor.close();
 
-        } else {
+        } else
+        {
             // 其他的电话号码
-            switch (number.length()) {
+            switch (number.length())
+            {
             case 3:
                 // 110
                 address = "匪警号码";
@@ -61,13 +66,15 @@ public class NumberAddressQueryUtils {
 
             default:
                 // /处理长途电话 10
-                if (number.length() > 10 && number.startsWith("0")) {
+                if (number.length() > 10 && number.startsWith("0"))
+                {
                     // 010-59790386
                     Cursor cursor = database.rawQuery(
                       "select location from data2 where area = ?",
                       new String[] { number.substring(1, 3) });
 
-                    while (cursor.moveToNext()) {
+                    while (cursor.moveToNext())
+                    {
                         String location = cursor.getString(0);
                         address = location.substring(0, location.length() - 2);
                     }
@@ -77,10 +84,10 @@ public class NumberAddressQueryUtils {
                     cursor = database.rawQuery(
                       "select location from data2 where area = ?",
                       new String[] { number.substring(1, 4) });
-                    while (cursor.moveToNext()) {
+                    while (cursor.moveToNext())
+                    {
                         String location = cursor.getString(0);
                         address = location.substring(0, location.length() - 2);
-
                     }
                 }
 

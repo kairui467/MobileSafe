@@ -15,7 +15,9 @@
     </wildcardResourcePatterns>
     <annotationProcessing>
       <profile default="true" name="Default" enabled="false">
-        <processorPath useClasspath="true" />
+        <processorPath useClasspath="false">
+          <entry name="H:/baiduyundownload/androidannotations-api-3.2.jar" />
+        </processorPath>
       </profile>
     </annotationProcessing>
   </component>
