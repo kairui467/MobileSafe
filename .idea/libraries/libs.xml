@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="libs">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/out/production/MobileSafe/libs/junit-4.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/out/production/MobileSafe/libs/afinal_0.5.1_bin.jar!/" />
+      <root url="jar://$PROJECT_DIR$/out/production/MobileSafe/libs/xUtils-2.6.14.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

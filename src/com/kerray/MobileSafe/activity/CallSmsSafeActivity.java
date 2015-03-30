@@ -1,8 +1,10 @@
 package com.kerray.MobileSafe.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
@@ -13,10 +15,9 @@ import com.lidroid.xutils.DbUtils;
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.exception.DbException;
 import com.lidroid.xutils.view.annotation.ViewInject;
+import com.lidroid.xutils.view.annotation.event.OnClick;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * @Created by kerray on 2015/3/28.
@@ -30,6 +31,12 @@ public class CallSmsSafeActivity extends Activity
 {
     @ViewInject(R.id.lv_callsms_safe)
     private ListView lv_callsms_safe;
+
+    private EditText et_blacknumber;
+    private CheckBox cb_phone;
+    private CheckBox cb_sms;
+    private Button bt_ok;
+    private Button bt_cancel;
 
     private List<BlackNumberInfo> infos;
     private BlackNumberDao dao;
@@ -45,40 +52,13 @@ public class CallSmsSafeActivity extends Activity
 
         ViewUtils.inject(this);
 
-        db = DbUtils.create(this);
-        db.configAllowTransaction(true);
-        db.configDebug(true);
         dao = new BlackNumberDao(this);
-
-        addData();
 
         infos = dao.findAll();
         adapter = new CallSmsSafeAdapter();
         lv_callsms_safe.setAdapter(adapter);
     }
 
-    private void addData()
-    {
-        List<BlackNumberInfo> result = new ArrayList<BlackNumberInfo>();
-        BlackNumberInfo mBlackNumberInfo;
-        long basenumber = 13500000000l;
-        Random random = new Random();
-        try
-        {
-            for (int i = 0; i < 20; i++)
-            {
-                mBlackNumberInfo = new BlackNumberInfo();
-                mBlackNumberInfo.setNumber(String.valueOf(basenumber + i));
-                mBlackNumberInfo.setMode(String.valueOf(random.nextInt(3) + 1));
-                result.add(mBlackNumberInfo);
-            }
-            db.saveAll(result);
-            Toast.makeText(this, "插入成功", Toast.LENGTH_SHORT).show();
-        } catch (DbException e)
-        {
-            e.printStackTrace();
-        }
-    }
 
     private class CallSmsSafeAdapter extends BaseAdapter
     {
@@ -89,14 +69,14 @@ public class CallSmsSafeActivity extends Activity
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent)
+        public View getView(final int position, View convertView, ViewGroup parent)
         {
             View view;
             ViewHolder holder;
             //1.减少内存中view对象创建的个数
             if (convertView == null)
             {
-                Log.i("kerray", "创建新的view对象：" + position);
+                //Log.i("kerray", "创建新的view对象：" + position);
                 //把一个布局文件转化成  view对象。
                 view = View.inflate(getApplicationContext(), R.layout.list_item_callsms, null);
                 //2.减少子孩子查询的次数  内存中对象的地址。
@@ -108,7 +88,7 @@ public class CallSmsSafeActivity extends Activity
                 view.setTag(holder);
             } else
             {
-                Log.i("kerray", "厨房有历史的view对象，复用历史缓存的view对象：" + position);
+                //Log.i("kerray", "厨房有历史的view对象，复用历史缓存的view对象：" + position);
                 view = convertView;
                 holder = (ViewHolder) view.getTag();//5%
             }
@@ -121,7 +101,7 @@ public class CallSmsSafeActivity extends Activity
             else
                 holder.tv_mode.setText("全部拦截");
 
-            /*holder.iv_delete.setOnClickListener(new View.OnClickListener()
+            holder.iv_delete.setOnClickListener(new View.OnClickListener()
             {
                 @Override
                 public void onClick(View v)
@@ -135,7 +115,13 @@ public class CallSmsSafeActivity extends Activity
                         public void onClick(DialogInterface dialog, int which)
                         {
                             //删除数据库的内容
-                            dao.delete(infos.get(position).getNumber());
+                            try
+                            {
+                                dao.delete(infos.get(position).getNumber());
+                            } catch (DbException e)
+                            {
+                                e.printStackTrace();
+                            }
                             //更新界面。
                             infos.remove(position);
                             //通知listview数据适配器更新
@@ -145,7 +131,7 @@ public class CallSmsSafeActivity extends Activity
                     builder.setNegativeButton("取消", null);
                     builder.show();
                 }
-            });*/
+            });
             return view;
         }
 
@@ -172,6 +158,70 @@ public class CallSmsSafeActivity extends Activity
         TextView tv_number;
         TextView tv_mode;
         ImageView iv_delete;
+    }
+
+    @OnClick(R.id.addBlackNumber)
+    public void addBlackNumber(View view)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final AlertDialog dialog = builder.create();
+        View contentView = View.inflate(this, R.layout.dialog_add_blacknumber, null);
+
+        et_blacknumber = (EditText) contentView.findViewById(R.id.et_blacknumber);
+        cb_phone = (CheckBox) contentView.findViewById(R.id.cb_phone);
+        cb_sms = (CheckBox) contentView.findViewById(R.id.cb_sms);
+        bt_cancel = (Button) contentView.findViewById(R.id.cancel);
+        bt_ok = (Button) contentView.findViewById(R.id.ok);
+
+        dialog.setView(contentView, 0, 0, 0, 0);
+        dialog.show();
+
+        bt_cancel.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                dialog.dismiss();
+            }
+        });
+        bt_ok.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                String blacknumber = et_blacknumber.getText().toString().trim();
+                if (TextUtils.isEmpty(blacknumber))
+                {
+                    Toast.makeText(getApplicationContext(), "黑名单号码不能为空", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                String mode;
+                if (cb_phone.isChecked() && cb_sms.isChecked())
+                    //全部拦截
+                    mode = "3";
+                else if (cb_phone.isChecked())
+                    //电话拦截
+                    mode = "1";
+                else if (cb_sms.isChecked())
+                    //短信拦截
+                    mode = "2";
+                else
+                {
+                    Toast.makeText(getApplicationContext(), "请选择拦截模式", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                //数据被加到数据库
+                dao.add(blacknumber, mode);
+                //更新listview集合里面的内容。
+                BlackNumberInfo info = new BlackNumberInfo();
+                info.setMode(mode);
+                info.setNumber(blacknumber);
+                infos.add(0, info);
+                //通知listview数据适配器数据更新了。
+                adapter.notifyDataSetChanged();
+                dialog.dismiss();
+            }
+        });
     }
 
 }

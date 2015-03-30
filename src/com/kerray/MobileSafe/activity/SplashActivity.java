@@ -19,8 +19,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.kerray.MobileSafe.R;
 import com.kerray.MobileSafe.utils.StreamTools;
-import net.tsz.afinal.FinalHttp;
-import net.tsz.afinal.http.AjaxCallBack;
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.ViewUtils;
+import com.lidroid.xutils.exception.HttpException;
+import com.lidroid.xutils.http.HttpHandler;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.callback.RequestCallBack;
+import com.lidroid.xutils.view.annotation.ViewInject;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -45,7 +50,9 @@ public class SplashActivity extends Activity
     private String apkurl;                          //新版本的下载地址
     private boolean update;                         //是否自动升级
 
+    @ViewInject(R.id.tv_update_info)
     private TextView tv_update_info;
+    @ViewInject(R.id.tv_splash_version)
     private TextView tv_splash_version;
 
     private SharedPreferences sp;
@@ -56,8 +63,7 @@ public class SplashActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        tv_splash_version = (TextView) findViewById(R.id.tv_splash_version);
-        tv_update_info = (TextView) findViewById(R.id.tv_update_info);
+        ViewUtils.inject(this);
 
         tv_splash_version.setText("版本号：" + getVersionName());
         tv_update_info.setVisibility(View.GONE);
@@ -88,20 +94,25 @@ public class SplashActivity extends Activity
     /**
      * //path 把address.db这个数据库拷贝到data/data/《包名》/files/address.db
      */
-    private void copyDB() {
+    private void copyDB()
+    {
         //只要你拷贝了一次，我就不要你再拷贝了
-        try {
+        try
+        {
             File file = new File(getFilesDir(), "address.db");
-            if(file.exists()&&file.length()>0){
+            if (file.exists() && file.length() > 0)
+            {
                 //正常了，就不需要拷贝了
                 Log.i(TAG, "正常了，就不需要拷贝了");
-            }else{
+            } else
+            {
                 InputStream is = getAssets().open("address.db");
 
                 FileOutputStream fos = new FileOutputStream(file);
                 byte[] buffer = new byte[1024];
                 int len = 0;
-                while((len = is.read(buffer))!= -1){
+                while ((len = is.read(buffer)) != -1)
+                {
                     fos.write(buffer, 0, len);
                 }
                 is.close();
@@ -109,7 +120,8 @@ public class SplashActivity extends Activity
             }
 
 
-        } catch (IOException e) {
+        } catch (IOException e)
+        {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
@@ -256,7 +268,52 @@ public class SplashActivity extends Activity
                 // 下载APK，并且替换安装
                 if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
                 {
-                    FinalHttp finalHttp = new FinalHttp();
+                    HttpUtils http = new HttpUtils();
+                    HttpHandler handler = http.download(apkurl, Environment.getExternalStorageDirectory().getAbsolutePath() + "/mobilesafe2.0.apk", false, false, new RequestCallBack<File>()
+                    {
+                        @Override
+                        public void onSuccess(ResponseInfo<File> responseInfo)
+                        {
+                            installAPK(responseInfo.result.getAbsoluteFile());
+                        }
+
+                        @Override
+                        public void onFailure(HttpException e, String s)
+                        {
+                            Toast.makeText(SplashActivity.this, "下载失败", Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onLoading(long total, long current, boolean isUploading)
+                        {
+                            super.onLoading(total, current, isUploading);
+                            tv_update_info.setVisibility(View.VISIBLE);
+                            //当前下载百分比
+                            long progress = current * 100 / total;
+                            tv_update_info.setText("下载进度：" + progress + "%");
+                        }
+
+                        @Override
+                        public void onStart()
+                        {
+                            super.onStart();
+                            tv_update_info.setText("开始下载！");
+                        }
+                        /**
+                         * 安装APK
+                         * @param file
+                         */
+                        private void installAPK(File file)
+                        {
+                            Intent intent = new Intent();
+                            intent.setAction("android.intent.action.VIEW");
+                            intent.addCategory("android.intent.category.DEFAULT");
+                            intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
+                            startActivity(intent);
+                        }
+                    });
+                    // Afinal 框架方式下载文件
+                    /*FinalHttp finalHttp = new FinalHttp();
                     finalHttp.download(apkurl, Environment.getExternalStorageDirectory().getAbsolutePath() + "/mobilesafe2.0.apk",
                       new AjaxCallBack<File>()
                       {
@@ -277,10 +334,7 @@ public class SplashActivity extends Activity
                               installAPK(file);
                           }
 
-                          /**
-                           * 安装APK
-                           * @param file
-                           */
+
                           private void installAPK(File file)
                           {
                               Intent intent = new Intent();
@@ -297,7 +351,7 @@ public class SplashActivity extends Activity
                               super.onFailure(t, errorNo, strMsg);
                               Toast.makeText(SplashActivity.this, "下载失败", Toast.LENGTH_SHORT).show();
                           }
-                      });
+                      });*/
                 } else
                 {
                     Toast.makeText(SplashActivity.this, "没有sdcard，请安装上在试", Toast.LENGTH_SHORT).show();

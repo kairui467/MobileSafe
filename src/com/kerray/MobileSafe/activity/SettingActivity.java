@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.View;
 import com.kerray.MobileSafe.R;
 import com.kerray.MobileSafe.service.AddressService;
+import com.kerray.MobileSafe.service.CallSmsSafeService;
 import com.kerray.MobileSafe.ui.SettingClickView;
 import com.kerray.MobileSafe.ui.SettingItemView;
 import com.kerray.MobileSafe.utils.ServiceUtils;
@@ -33,6 +34,10 @@ public class SettingActivity extends Activity
 
     //设置归属地显示框背景
     private SettingClickView scv_changebg;
+
+    //黑名单拦截设置
+    private SettingItemView siv_callsms_safe;
+    private Intent callSmsSafeIntent;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -101,25 +106,51 @@ public class SettingActivity extends Activity
             }
         });
 
+        //黑名单拦截设置
+        siv_callsms_safe = (SettingItemView) findViewById(R.id.siv_callsms_safe);
+        callSmsSafeIntent = new Intent(this, CallSmsSafeService.class);
+        siv_callsms_safe.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                if (siv_callsms_safe.isChecked())
+                {
+                    // 变为非选中状态
+                    siv_callsms_safe.setChecked(false);
+                    stopService(callSmsSafeIntent);
+                } else
+                {
+                    // 选择状态
+                    siv_callsms_safe.setChecked(true);
+                    startService(callSmsSafeIntent);
+                }
+
+            }
+        });
+
         //设置号码归属地的背景
         scv_changebg = (SettingClickView) findViewById(R.id.scv_changebg);
         scv_changebg.setTitle("归属地提示框风格");
-        final String [] items = {"半透明","活力橙","卫士蓝","金属灰","苹果绿"};
+        final String[] items = { "半透明", "活力橙", "卫士蓝", "金属灰", "苹果绿" };
         int which = sp.getInt("which", 0);
         scv_changebg.setDesc(items[which]);
 
-        scv_changebg.setOnClickListener(new View.OnClickListener() {
-
+        scv_changebg.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 int dd = sp.getInt("which", 0);
                 // 弹出一个对话框
                 AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
                 builder.setTitle("归属地提示框风格");
-                builder.setSingleChoiceItems(items,dd, new DialogInterface.OnClickListener() {
+                builder.setSingleChoiceItems(items, dd, new DialogInterface.OnClickListener()
+                {
 
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    public void onClick(DialogInterface dialog, int which)
+                    {
 
                         //保存选择参数
                         SharedPreferences.Editor editor = sp.edit();
@@ -133,7 +164,6 @@ public class SettingActivity extends Activity
                 });
                 builder.setNegativeButton("cancel", null);
                 builder.show();
-
             }
         });
     }
@@ -150,6 +180,11 @@ public class SettingActivity extends Activity
             siv_show_address.setChecked(true);
         else
             siv_show_address.setChecked(false);
+
+        boolean iscallSmsServiceRunning = ServiceUtils.isServiceRunning(
+          SettingActivity.this,
+          "com.kerray.MobileSafe.service.CallSmsSafeService");
+        siv_callsms_safe.setChecked(iscallSmsServiceRunning);
 
         super.onResume();
     }

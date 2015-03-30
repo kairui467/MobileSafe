@@ -7,10 +7,12 @@ import com.kerray.MobileSafe.domain.BlackNumberInfo;
 import com.lidroid.xutils.DbUtils;
 import com.lidroid.xutils.db.sqlite.Selector;
 import com.lidroid.xutils.db.sqlite.WhereBuilder;
+import com.lidroid.xutils.db.table.DbModel;
 import com.lidroid.xutils.exception.DbException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * 黑名单数据库的增删改查业务类
@@ -21,9 +23,38 @@ public class BlackNumberDao
 
     public BlackNumberDao(Context pContext)
     {
-        db = DbUtils.create(pContext);
+        db = DbUtils.create(pContext, "blacknumber.db");
         db.configAllowTransaction(true);
         db.configDebug(true);
+
+        addData();
+    }
+
+    /**
+     * 添加数据
+     */
+    public boolean addData()
+    {
+        List<BlackNumberInfo> result = new ArrayList<BlackNumberInfo>();
+        BlackNumberInfo mBlackNumberInfo;
+        long basenumber = 13500000000l;
+        Random random = new Random();
+        try
+        {
+            for (int i = 0; i < 20; i++)
+            {
+                mBlackNumberInfo = new BlackNumberInfo();
+                mBlackNumberInfo.setNumber(String.valueOf(basenumber + i));
+                mBlackNumberInfo.setMode(String.valueOf(random.nextInt(3) + 1));
+                result.add(mBlackNumberInfo);
+            }
+            db.saveAll(result);
+            return true;
+        } catch (DbException e)
+        {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     /**
@@ -56,13 +87,16 @@ public class BlackNumberDao
     public String findMode(String number)
     {
         String result = null;
-        /*SQLiteDatabase db = helper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("select mode from blacknumber where number=?", new String[]{number});
-        if(cursor.moveToNext()){
-            result = cursor.getString(0);
+        try
+        {
+            List<DbModel> bnLists = db.findDbModelAll(Selector.from(BlackNumberInfo.class).select("mode").where("number", "=", number));
+            for (DbModel dd : bnLists)
+                result = dd.getString("mode");
+            //Log.i("kerray", "result====" + result);
+        } catch (DbException e)
+        {
+            e.printStackTrace();
         }
-        cursor.close();
-        db.close();*/
         return result;
     }
 
@@ -87,13 +121,14 @@ public class BlackNumberDao
         db.close();*/
         try
         {
-            result = db.findAll(Selector.from(BlackNumberInfo.class).orderBy("id"));
+            result = db.findAll(Selector.from(BlackNumberInfo.class).orderBy("id", true));
         } catch (DbException e)
         {
             e.printStackTrace();
         }
         return result;
     }
+
 
 
     /**
@@ -109,12 +144,12 @@ public class BlackNumberDao
         values.put("mode", mode);
         db.insert("blacknumber", null, values);
         db.close();*/
-        ContentValues values = new ContentValues();
-        values.put("number", number);
-        values.put("mode", mode);
+        BlackNumberInfo mBlackNumberInfo = new BlackNumberInfo();
+        mBlackNumberInfo.setNumber(number);
+        mBlackNumberInfo.setMode(mode);
         try
         {
-            db.saveBindingId(values);
+            db.saveBindingId(mBlackNumberInfo);
         } catch (DbException e)
         {
             e.printStackTrace();
@@ -144,9 +179,6 @@ public class BlackNumberDao
      */
     public void delete(String number) throws DbException
     {
-        /*SQLiteDatabase db = helper.getWritableDatabase();
-        db.delete("blacknumber",  "number=?", new String[]{number});
-        db.close();*/
         db.delete(BlackNumberInfo.class, WhereBuilder.b("number", "=", number));
     }
 }

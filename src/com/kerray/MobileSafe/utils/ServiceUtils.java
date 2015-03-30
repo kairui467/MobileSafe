@@ -2,7 +2,6 @@ package com.kerray.MobileSafe.utils;
 
 import android.app.ActivityManager;
 import android.content.Context;
-import android.util.Log;
 
 import java.util.List;
 
@@ -28,7 +27,7 @@ public class ServiceUtils
         for (ActivityManager.RunningServiceInfo info : infos)
         {
             String name = info.service.getClassName();
-            Log.i("kerray", "ServerName---->" + name);
+            //Log.i("kerray", "ServerName---->" + name);
             if (serviceName.equals(name))
             {
                 return true;
