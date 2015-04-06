@@ -28,6 +28,7 @@ public class BlackNumberDao
         db.configDebug(true);
 
         addData();
+
     }
 
     /**
@@ -41,7 +42,7 @@ public class BlackNumberDao
         Random random = new Random();
         try
         {
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < 100; i++)
             {
                 mBlackNumberInfo = new BlackNumberInfo();
                 mBlackNumberInfo.setNumber(String.valueOf(basenumber + i));
@@ -129,6 +130,55 @@ public class BlackNumberDao
         return result;
     }
 
+    /**
+     * 查询部分的黑名单号码
+     * @param offset    从哪个位置开始获取数据
+     * @param maxnumber 一次最多获取多少条记录
+     * @return
+     */
+    public List<BlackNumberInfo> findPart(int offset, int maxnumber)
+    {
+        List<BlackNumberInfo> result = new ArrayList<BlackNumberInfo>();
+        try
+        {
+            Thread.sleep(500);
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        /*SQLiteDatabase db = helper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("select number,mode from blacknumber order by _id desc  limit ? offset ? ",
+          new String[] { String.valueOf(maxnumber), String.valueOf(offset) });
+        while (cursor.moveToNext())
+        {
+            BlackNumberInfo info = new BlackNumberInfo();
+            String number = cursor.getString(0);
+            String mode = cursor.getString(1);
+            info.setMode(mode);
+            info.setNumber(number);
+            result.add(info);
+        }
+        cursor.close();
+        db.close();*/
+        List<DbModel> bnLists = null;
+        try
+        {
+            bnLists = db.findDbModelAll(Selector.from(BlackNumberInfo.class).select("number", "mode").orderBy("id", true).limit(maxnumber).offset(offset));
+        } catch (DbException e)
+        {
+            e.printStackTrace();
+        }
+        for (DbModel dd : bnLists)
+        {
+            BlackNumberInfo info = new BlackNumberInfo();
+            String number = dd.getString("number");
+            String mode = dd.getString("mode");
+            info.setNumber(number);
+            info.setMode(mode);
+            result.add(info);
+        }
+        return result;
+    }
 
 
     /**

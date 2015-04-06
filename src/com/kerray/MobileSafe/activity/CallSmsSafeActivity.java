@@ -32,6 +32,9 @@ public class CallSmsSafeActivity extends Activity
     @ViewInject(R.id.lv_callsms_safe)
     private ListView lv_callsms_safe;
 
+    @ViewInject(R.id.ll_loading)
+    private LinearLayout ll_loading;
+
     private EditText et_blacknumber;
     private CheckBox cb_phone;
     private CheckBox cb_sms;
@@ -41,8 +44,13 @@ public class CallSmsSafeActivity extends Activity
     private List<BlackNumberInfo> infos;
     private BlackNumberDao dao;
 
-    private CallSmsSafeAdapter adapter;
+    private CallSmsSafeAdapter mCallSmsSafeAdapter;
+    private MyOnScrollListener mMyOnScrollListener;
     private DbUtils db;
+
+    private int offset = 0;                 // 每页开始的位置
+    private int maxnumber = 20;             // 每页显示 Item 数目
+
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -51,24 +59,85 @@ public class CallSmsSafeActivity extends Activity
         setContentView(R.layout.activity_call_sms_safe);
 
         ViewUtils.inject(this);
-
         dao = new BlackNumberDao(this);
+        mMyOnScrollListener = new MyOnScrollListener();
 
-        infos = dao.findAll();
-        adapter = new CallSmsSafeAdapter();
-        lv_callsms_safe.setAdapter(adapter);
+        fillData();
+        // listview注册一个滚动事件的监听器。
+        lv_callsms_safe.setOnScrollListener(mMyOnScrollListener);
+    }
+
+    private class MyOnScrollListener implements AbsListView.OnScrollListener
+    {
+        // 当滚动的状态发生变化的时候。
+        public void onScrollStateChanged(AbsListView view, int scrollState)
+        {
+            switch (scrollState)
+            {
+            case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:                // 空闲状态
+                // 判断当前listview滚动的位置
+                // 获取最后一个可见条目在集合里面的位置。
+                int lastposition = lv_callsms_safe.getLastVisiblePosition();
+
+                // 集合里面有20个item 位置从0开始的 最后一个条目的位置 19
+                if (lastposition == (infos.size() - 1))
+                {
+                    // Log.i("kerray", "列表被移动到了最后一个位置，加载更多的数据。。。");
+                    offset += maxnumber;
+                    fillData();
+                }
+                break;
+            case AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:        // 手指触摸滚动
+                break;
+            case AbsListView.OnScrollListener.SCROLL_STATE_FLING:               // 惯性滑行状态
+                break;
+            }
+        }
+
+        // 滚动的时候调用的方法。
+        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
+        {
+        }
+    }
+
+    private void fillData()
+    {
+        ll_loading.setVisibility(View.VISIBLE);
+        new Thread()
+        {
+            public void run()
+            {
+                if (infos == null)
+                    infos = dao.findPart(offset, maxnumber);
+                else
+                    infos.addAll(dao.findPart(offset, maxnumber));              // 原来已经加载过数据了。
+
+                runOnUiThread(new Runnable()
+                {
+                    public void run()
+                    {
+                        ll_loading.setVisibility(View.INVISIBLE);
+                        if (mCallSmsSafeAdapter == null)
+                        {
+                            mCallSmsSafeAdapter = new CallSmsSafeAdapter();
+                            lv_callsms_safe.setAdapter(mCallSmsSafeAdapter);
+                        } else
+                            mCallSmsSafeAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
+        }.start();
     }
 
 
     private class CallSmsSafeAdapter extends BaseAdapter
     {
-        @Override
         public int getCount()
         {
             return infos.size();
         }
 
-        @Override
+        // 有多少个条目被显示，这个方法就会被调用多少次
         public View getView(final int position, View convertView, ViewGroup parent)
         {
             View view;
@@ -81,9 +150,7 @@ public class CallSmsSafeActivity extends Activity
                 view = View.inflate(getApplicationContext(), R.layout.list_item_callsms, null);
                 //2.减少子孩子查询的次数  内存中对象的地址。
                 holder = new ViewHolder();
-                holder.tv_number = (TextView) view.findViewById(R.id.tv_black_number);
-                holder.tv_mode = (TextView) view.findViewById(R.id.tv_block_mode);
-                holder.iv_delete = (ImageView) view.findViewById(R.id.iv_delete);
+                ViewUtils.inject(holder, view);
                 //当孩子生出来的时候找到他们的引用，存放在记事本，放在父亲的口袋
                 view.setTag(holder);
             } else
@@ -125,7 +192,7 @@ public class CallSmsSafeActivity extends Activity
                             //更新界面。
                             infos.remove(position);
                             //通知listview数据适配器更新
-                            adapter.notifyDataSetChanged();
+                            mCallSmsSafeAdapter.notifyDataSetChanged();
                         }
                     });
                     builder.setNegativeButton("取消", null);
@@ -135,13 +202,11 @@ public class CallSmsSafeActivity extends Activity
             return view;
         }
 
-        @Override
         public Object getItem(int position)
         {
             return null;
         }
 
-        @Override
         public long getItemId(int position)
         {
             return 0;
@@ -155,8 +220,11 @@ public class CallSmsSafeActivity extends Activity
      */
     static class ViewHolder
     {
+        @ViewInject(R.id.tv_black_number)
         TextView tv_number;
+        @ViewInject(R.id.tv_block_mode)
         TextView tv_mode;
+        @ViewInject(R.id.iv_delete)
         ImageView iv_delete;
     }
 
@@ -197,14 +265,11 @@ public class CallSmsSafeActivity extends Activity
                 }
                 String mode;
                 if (cb_phone.isChecked() && cb_sms.isChecked())
-                    //全部拦截
-                    mode = "3";
+                    mode = "3";                 //全部拦截
                 else if (cb_phone.isChecked())
-                    //电话拦截
-                    mode = "1";
+                    mode = "1";                 //电话拦截
                 else if (cb_sms.isChecked())
-                    //短信拦截
-                    mode = "2";
+                    mode = "2";                 //短信拦截
                 else
                 {
                     Toast.makeText(getApplicationContext(), "请选择拦截模式", Toast.LENGTH_LONG).show();
@@ -218,10 +283,9 @@ public class CallSmsSafeActivity extends Activity
                 info.setNumber(blacknumber);
                 infos.add(0, info);
                 //通知listview数据适配器数据更新了。
-                adapter.notifyDataSetChanged();
+                mCallSmsSafeAdapter.notifyDataSetChanged();
                 dialog.dismiss();
             }
         });
     }
-
 }

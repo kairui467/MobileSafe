@@ -26,7 +26,6 @@ import com.kerray.MobileSafe.db.dao.NumberAddressQueryUtils;
  */
 public class NumberAddressQueryActivity extends Activity
 {
-
     private EditText ed_phone;
     private TextView result;
 
@@ -51,7 +50,6 @@ public class NumberAddressQueryActivity extends Activity
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after)
             {
-
             }
 
             /**
@@ -74,7 +72,6 @@ public class NumberAddressQueryActivity extends Activity
             @Override
             public void afterTextChanged(Editable s)
             {
-
             }
         });
     }

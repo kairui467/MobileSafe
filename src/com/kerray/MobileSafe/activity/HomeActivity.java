@@ -72,15 +72,19 @@ public class HomeActivity extends Activity
                     showLostFindDialog();
                     break;
                 case 1://加载黑名单拦截界面
-                    startActivity(new Intent(HomeActivity.this,CallSmsSafeActivity.class));
+                    startActivity(new Intent(HomeActivity.this, CallSmsSafeActivity.class));
+                    break;
+                case 2://软件管理器
+                    startActivity(new Intent(HomeActivity.this, AppManagerActivity.class));
+                    break;
+                case 3://进程管理器
+                    startActivity(new Intent(HomeActivity.this, TaskManagerActivity.class));
                     break;
                 case 7://进入高级工具
-                    startActivity(new Intent(HomeActivity.this, NumberAddressQueryActivity.class));
+                    startActivity(new Intent(HomeActivity.this, AtoolsActivity.class));
                     break;
                 case 8://进入设置中心
                     startActivity(new Intent(HomeActivity.this, SettingActivity.class));
-                    break;
-                default:
                     break;
                 }
             }

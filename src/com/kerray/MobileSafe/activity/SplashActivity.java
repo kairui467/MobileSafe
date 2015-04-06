@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -69,6 +70,7 @@ public class SplashActivity extends Activity
         tv_update_info.setVisibility(View.GONE);
 
         initSharedPreferences();
+        installShortCut();
 
         //拷贝数据库
         copyDB();
@@ -89,6 +91,36 @@ public class SplashActivity extends Activity
         AlphaAnimation aa = new AlphaAnimation(0.2f, 1.0f);
         aa.setDuration(1000);
         findViewById(R.id.rl_root_splash).startAnimation(aa);
+    }
+
+    /**
+     * 创建快捷图标
+     */
+    private void installShortCut()
+    {
+        boolean shortcut = sp.getBoolean("shortcut", false);
+        if (shortcut)
+            return;
+
+        SharedPreferences.Editor editor = sp.edit();
+        //发送广播的意图， 大吼一声告诉桌面，要创建快捷图标了
+        Intent intent = new Intent();
+        intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+        //快捷方式  要包含3个重要的信息 1，名称 2.图标 3.干什么事情
+        intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, "手机小卫士");
+        intent.putExtra(Intent.EXTRA_SHORTCUT_ICON, BitmapFactory.decodeResource(getResources(), R.drawable.ic_launche));
+        //桌面点击图标对应的意图。
+        Intent shortcutIntent = new Intent();
+        shortcutIntent.setAction("android.intent.action.MAIN");
+        shortcutIntent.addCategory("android.intent.category.LAUNCHER");
+        shortcutIntent.setClassName(getPackageName(), "com.kerray.MobileSafe.activity.SplashActivity");
+        //shortcutIntent.setAction("com.itheima.xxxx");
+        //shortcutIntent.addCategory(Intent.CATEGORY_DEFAULT);
+        intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+        sendBroadcast(intent);
+
+        editor.putBoolean("shortcut", true);
+        editor.commit();
     }
 
     /**
@@ -223,18 +255,18 @@ public class SplashActivity extends Activity
                 Log.i(TAG, "显示升级的对话框");
                 showUpdateDialog();
                 break;
-            case ENTER_HOME:// 进入主页面
+            case ENTER_HOME:        // 进入主页面
                 enterHome();
                 break;
-            case URL_ERROR:// URL错误
+            case URL_ERROR:         // URL错误
                 enterHome();
                 Toast.makeText(SplashActivity.this, "URL错误", Toast.LENGTH_SHORT).show();
                 break;
-            case NETWORK_ERROR:// 网络异常
+            case NETWORK_ERROR:     // 网络异常
                 enterHome();
                 Toast.makeText(SplashActivity.this, "网络异常", Toast.LENGTH_SHORT).show();
                 break;
-            case JSON_ERROR:// JSON解析出错
+            case JSON_ERROR:        // JSON解析出错
                 enterHome();
                 Toast.makeText(SplashActivity.this, "JSON解析出错", Toast.LENGTH_SHORT).show();
                 break;
@@ -299,6 +331,7 @@ public class SplashActivity extends Activity
                             super.onStart();
                             tv_update_info.setText("开始下载！");
                         }
+
                         /**
                          * 安装APK
                          * @param file
@@ -312,46 +345,6 @@ public class SplashActivity extends Activity
                             startActivity(intent);
                         }
                     });
-                    // Afinal 框架方式下载文件
-                    /*FinalHttp finalHttp = new FinalHttp();
-                    finalHttp.download(apkurl, Environment.getExternalStorageDirectory().getAbsolutePath() + "/mobilesafe2.0.apk",
-                      new AjaxCallBack<File>()
-                      {
-                          @Override
-                          public void onLoading(long count, long current)
-                          {
-                              super.onLoading(count, current);
-                              tv_update_info.setVisibility(View.VISIBLE);
-                              //当前下载百分比
-                              long progress = current * 100 / count;
-                              tv_update_info.setText("下载进度：" + progress + "%");
-                          }
-
-                          @Override
-                          public void onSuccess(File file)
-                          {
-                              super.onSuccess(file);
-                              installAPK(file);
-                          }
-
-
-                          private void installAPK(File file)
-                          {
-                              Intent intent = new Intent();
-                              intent.setAction("android.intent.action.VIEW");
-                              intent.addCategory("android.intent.category.DEFAULT");
-                              intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
-                              startActivity(intent);
-                          }
-
-                          @Override
-                          public void onFailure(Throwable t, int errorNo, String strMsg)
-                          {
-                              t.printStackTrace();
-                              super.onFailure(t, errorNo, strMsg);
-                              Toast.makeText(SplashActivity.this, "下载失败", Toast.LENGTH_SHORT).show();
-                          }
-                      });*/
                 } else
                 {
                     Toast.makeText(SplashActivity.this, "没有sdcard，请安装上在试", Toast.LENGTH_SHORT).show();
