@@ -26,9 +26,7 @@ public class BlackNumberDao
         db = DbUtils.create(pContext, "blacknumber.db");
         db.configAllowTransaction(true);
         db.configDebug(true);
-
         addData();
-
     }
 
     /**

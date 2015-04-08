@@ -65,7 +65,6 @@ public class UpdateWidgetService extends Service
             timer = new Timer();
             task = new TimerTask()
             {
-                @Override
                 public void run()
                 {
                     Log.i("kerray", "更新widget");

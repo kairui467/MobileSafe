@@ -10,6 +10,7 @@ import android.view.View;
 import com.kerray.MobileSafe.R;
 import com.kerray.MobileSafe.service.AddressService;
 import com.kerray.MobileSafe.service.CallSmsSafeService;
+import com.kerray.MobileSafe.service.WatchDogService;
 import com.kerray.MobileSafe.ui.SettingClickView;
 import com.kerray.MobileSafe.ui.SettingItemView;
 import com.kerray.MobileSafe.utils.ServiceUtils;
@@ -38,6 +39,10 @@ public class SettingActivity extends Activity
     //黑名单拦截设置
     private SettingItemView siv_callsms_safe;
     private Intent callSmsSafeIntent;
+
+    //程序锁看门狗设置
+    private SettingItemView siv_watchdog;
+    private Intent watchDogIntent;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -129,6 +134,28 @@ public class SettingActivity extends Activity
             }
         });
 
+        //程序锁设置
+        siv_watchdog = (SettingItemView) findViewById(R.id.siv_watchdog);
+        watchDogIntent = new Intent(this, WatchDogService.class);
+        siv_watchdog.setOnClickListener(new View.OnClickListener()
+        {
+            public void onClick(View v)
+            {
+                if (siv_watchdog.isChecked())
+                {
+                    // 变为非选中状态
+                    siv_watchdog.setChecked(false);
+                    stopService(watchDogIntent);
+                } else
+                {
+                    // 选择状态
+                    siv_watchdog.setChecked(true);
+                    startService(watchDogIntent);
+                }
+
+            }
+        });
+
         //设置号码归属地的背景
         scv_changebg = (SettingClickView) findViewById(R.id.scv_changebg);
         scv_changebg.setTitle("归属地提示框风格");
@@ -182,10 +209,12 @@ public class SettingActivity extends Activity
             siv_show_address.setChecked(false);
 
         boolean iscallSmsServiceRunning = ServiceUtils.isServiceRunning(
-          SettingActivity.this,
-          "com.kerray.MobileSafe.service.CallSmsSafeService");
+          SettingActivity.this, "com.kerray.MobileSafe.service.CallSmsSafeService");
         siv_callsms_safe.setChecked(iscallSmsServiceRunning);
 
+        boolean iswatchdogServiceRunning = ServiceUtils.isServiceRunning(
+          SettingActivity.this, "com.kerray.MobileSafe.service.WatchDogService");
+        siv_watchdog.setChecked(iswatchdogServiceRunning);
         super.onResume();
     }
 }
