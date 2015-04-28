@@ -35,7 +35,7 @@ public class BootCompleteReceiver extends BroadcastReceiver
             tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
 
             // 读取之前保存的SiM信息；
-            String saveSim = sp.getString("sim", "")+"dkfmskljsjklm";
+            String saveSim = sp.getString("sim", "") + "dkfmskljsjklm";
 
             //读取当前的sim卡信息
             String realSim = tm.getSimSerialNumber();

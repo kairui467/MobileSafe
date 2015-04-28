@@ -35,6 +35,7 @@
         <activity android:name=".activity.AppManagerActivity"/>
         <activity android:name=".activity.TaskManagerActivity"/>
         <activity android:name=".activity.TaskManagerSettingActivity"/>
+        <activity android:name=".activity.TrafficManagerActivity"/>
         <!-- 1、launchMode：独立的任务栈
              2、excludeFromRecents：不出现在最近任务中-->
         <activity
@@ -42,6 +43,11 @@
                 android:launchMode="singleInstance"
                 android:excludeFromRecents="true"
                 />
+        <activity
+                android:name=".activity.AntiVirusActivity"
+                android:configChanges="orientation|keyboardHidden|screenSize"
+                />
+        <activity android:name=".activity.CleanCacheActivity"/>
 
 
         <!--*********************************服务注册********************************-->
@@ -114,6 +120,9 @@
     <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES"/>
     <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT"/>
     <uses-permission android:name="android.permission.GET_TASKS"/>
+    <uses-permission android:name="android.permission.GET_PACKAGE_SIZE"/>
+    <uses-permission android:name="android.permission.DELETE_CACHE_FILES"/>
+    <uses-permission android:name="android.permission.CLEAR_APP_CACHE"/>
 
     <!--******************************Debug******************************-->
     <instrumentation

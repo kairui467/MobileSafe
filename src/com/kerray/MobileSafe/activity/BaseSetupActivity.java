@@ -27,7 +27,7 @@ public abstract class BaseSetupActivity extends Activity
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        sp = getSharedPreferences("config",MODE_PRIVATE);
+        sp = getSharedPreferences("config", MODE_PRIVATE);
         //2.实例化这个手势识别器
         detector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener()
         {

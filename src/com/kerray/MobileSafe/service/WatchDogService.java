@@ -83,8 +83,6 @@ public class WatchDogService extends Service
         am = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
         dao = new ApplockDao(this);
         protectPacknames = dao.findAll();
-        for (String s : protectPacknames)
-            Log.i("kerray", "包名=====" + s);
         flag = true;
         // 当前应用需要保护。蹦出来，弹出来一个输入密码的界面。
         intent = new Intent(getApplicationContext(), EnterPwdActivity.class);

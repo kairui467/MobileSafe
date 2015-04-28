@@ -80,6 +80,15 @@ public class HomeActivity extends Activity
                 case 3://进程管理器
                     startActivity(new Intent(HomeActivity.this, TaskManagerActivity.class));
                     break;
+                case 4://流量统计
+                    startActivity(new Intent(HomeActivity.this, TrafficManagerActivity.class));
+                    break;
+                case 5://手机杀毒
+                    startActivity(new Intent(HomeActivity.this, AntiVirusActivity.class));
+                    break;
+                case 6://缓存清理
+                    startActivity(new Intent(HomeActivity.this, CleanCacheActivity.class));
+                    break;
                 case 7://进入高级工具
                     startActivity(new Intent(HomeActivity.this, AtoolsActivity.class));
                     break;

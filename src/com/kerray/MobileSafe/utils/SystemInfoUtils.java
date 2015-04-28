@@ -40,7 +40,8 @@ public class SystemInfoUtils
      * @param context
      * @return
      */
-    public static long getAvailMem(Context context){
+    public static long getAvailMem(Context context)
+    {
         ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         //获取内存大小
         ActivityManager.MemoryInfo outInfo = new ActivityManager.MemoryInfo();
@@ -48,12 +49,14 @@ public class SystemInfoUtils
         long availMem = outInfo.availMem;
         return availMem;
     }
+
     /**
      * 得到正在运行的进程的数量
      * @param context
      * @return
      */
-    public static int getRunningPocessCount(Context context){
+    public static int getRunningPocessCount(Context context)
+    {
         ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningAppProcessInfo> runningAppProcessInfos = am.getRunningAppProcesses();
         int count = runningAppProcessInfos.size();

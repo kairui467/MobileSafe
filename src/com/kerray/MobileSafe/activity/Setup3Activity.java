@@ -46,7 +46,7 @@ public class Setup3Activity extends BaseSetupActivity
     {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(data == null)
+        if (data == null)
             return;
 
         String phone = data.getStringExtra("phone").replace("-", "");
@@ -57,11 +57,11 @@ public class Setup3Activity extends BaseSetupActivity
     public void showNext()
     {
         String phone = et_setup3_phone.getText().toString().trim();
-        if(TextUtils.isEmpty(phone)){
+        if (TextUtils.isEmpty(phone))
+        {
             Toast.makeText(this, "安全号码还没有设置", Toast.LENGTH_SHORT).show();
             return;
         }
-
 
         //应该保持一些 安全号码
         SharedPreferences.Editor editor = sp.edit();

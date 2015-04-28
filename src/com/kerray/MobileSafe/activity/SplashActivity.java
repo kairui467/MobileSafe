@@ -73,7 +73,9 @@ public class SplashActivity extends Activity
         installShortCut();
 
         //拷贝数据库
-        copyDB();
+        copyDB("address.db");
+        copyDB("antivirus.db");
+
         if (update)
             //检测升级
             checkUpdate();
@@ -126,35 +128,31 @@ public class SplashActivity extends Activity
     /**
      * //path 把address.db这个数据库拷贝到data/data/《包名》/files/address.db
      */
-    private void copyDB()
+    private void copyDB(String pFileName)
     {
         //只要你拷贝了一次，我就不要你再拷贝了
         try
         {
-            File file = new File(getFilesDir(), "address.db");
+            File file = new File(getFilesDir(), pFileName);
             if (file.exists() && file.length() > 0)
             {
                 //正常了，就不需要拷贝了
-                Log.i(TAG, "正常了，就不需要拷贝了");
+                Log.i(TAG, pFileName + "正常了，就不需要拷贝了");
             } else
             {
-                InputStream is = getAssets().open("address.db");
+                InputStream is = getAssets().open(pFileName);
 
                 FileOutputStream fos = new FileOutputStream(file);
                 byte[] buffer = new byte[1024];
                 int len = 0;
                 while ((len = is.read(buffer)) != -1)
-                {
                     fos.write(buffer, 0, len);
-                }
+
                 is.close();
                 fos.close();
             }
-
-
         } catch (IOException e)
         {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }

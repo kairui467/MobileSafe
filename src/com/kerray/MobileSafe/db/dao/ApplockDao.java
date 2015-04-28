@@ -98,14 +98,6 @@ public class ApplockDao
     public List<String> findAll()
     {
         List<String> protectPacknames = new ArrayList<String>();
-        /*SQLiteDatabase db = helper.getReadableDatabase();
-        Cursor cursor = db.query("applock", new String[]{"packname"}, null,null, null, null, null);
-		while(cursor.moveToNext()){
-			protectPacknames.add(cursor.getString(0));
-		}
-		cursor.close();
-		db.close();*/
-
         try
         {
             List<AppLockInfo> bnLists = db.findAll(Selector.from(AppLockInfo.class));

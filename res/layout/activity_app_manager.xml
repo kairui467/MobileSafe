@@ -66,23 +66,23 @@
         </LinearLayout>
 
 
-            <ListView
-                    android:id="@+id/lv_app_manager"
-                    android:overScrollMode="never"
-                    android:fastScrollEnabled="true"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    >
-            </ListView>
+        <ListView
+                android:id="@+id/lv_app_manager"
+                android:overScrollMode="never"
+                android:fastScrollEnabled="true"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                >
+        </ListView>
 
-            <TextView
-                    android:id="@+id/tv_status"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:text="用户程序：6个"
-                    android:textColor="#ffffff"
-                    android:background="#ff888888"
-                    />
+        <TextView
+                android:id="@+id/tv_status"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="用户程序：6个"
+                android:textColor="#ffffff"
+                android:background="#ff888888"
+                />
 
     </FrameLayout>
 
